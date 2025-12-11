@@ -1,0 +1,22 @@
+numpy>=2.3,<3.0
+pandas>=2.2,<3.0
+pyarrow>=16.0.0,<20.0.0
+soundfile>=0.13.1
+librosa>=0.10,<0.11
+tqdm>=4.66,<5.0
+
+click>=8.1,<9.0
+pytest>=8.3,<9.0
+
+torch>=2.4,<3.0
+torchaudio>=2.4,<3.0
+torchmetrics[audio]>=1.8.0,<2.0
+
+pyannote.audio>=4.0.3,<4.1
+huggingface_hub>=0.23,<0.30
+
+gigaam @ git+https://github.com/salute-developers/GigaAM.git@main
+
+requests>=2.31,<3.0
+
+ffmpeg-python>=0.2.0,<1.0
