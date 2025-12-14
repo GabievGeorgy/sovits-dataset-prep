@@ -42,7 +42,7 @@ Key options:
 - `--device`: `auto` (prefer CUDA when available, falls back to CPU with a warning), `cuda` (requires GPU, errors if unavailable), or `cpu`
 
 - Filters: `--min-duration-sec`, `--max-duration-sec`, `--min-words`, `--min-quality-mos`, `--drop-multi-speaker`, `--allowed-speakers`
-- Diarization tuning: `--merge-gap-sec`, `--min-speakers`, `--max-speakers`, `--diar-min-speech-sec`, `--diar-min-pause-sec` (default 1.5s)
+- Diarization tuning: `--merge-gap-sec`, `--min-speakers`, `--max-speakers`, `--diar-min-speech-sec`, `--diar-min-pause-sec`
 
 Notes:
 - The Linux install script (`scripts/install_linux.sh`) runs a quick `pytest` suite after installing dependencies to catch obvious breakages early.

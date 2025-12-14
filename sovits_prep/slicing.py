@@ -34,15 +34,34 @@ def _slice_audio(source_wav: Path, out_wav: Path, start: float, end: float) -> N
 
 
 def _merge_segments(diar_df: pd.DataFrame, gap: float) -> pd.DataFrame:
+    per_source: dict[int, pd.DataFrame] = {}
+    for source_id, group in diar_df.groupby("source_id"):
+        per_source[int(source_id)] = group.sort_values("start_sec").reset_index(drop=True)
+
     merged_records: list[dict] = []
     for (source_id, speaker_id), group in diar_df.groupby(["source_id", "speaker_id"]):
+        source_df = per_source.get(int(source_id))
+        if source_df is None or source_df.empty:
+            continue
         entries = group.sort_values("start_sec").to_dict("records")
         current = None
         for seg in entries:
             if current is None:
                 current = seg
                 continue
-            if seg["start_sec"] - current["end_sec"] <= gap:
+
+            gap_sec = float(seg["start_sec"]) - float(current["end_sec"])
+            if gap_sec > 0:
+                blockers = source_df[
+                    (source_df["start_sec"] < float(seg["start_sec"]))
+                    & (source_df["end_sec"] > float(current["end_sec"]))
+                    & (source_df["speaker_id"] != speaker_id)
+                ]
+                has_other_speaker_between = not blockers.empty
+            else:
+                has_other_speaker_between = False
+
+            if gap_sec <= gap and not has_other_speaker_between:
                 current["end_sec"] = max(current["end_sec"], seg["end_sec"])
                 current["duration_sec"] = current["end_sec"] - current["start_sec"]
                 current["overlap"] = bool(current.get("overlap", False) or seg.get("overlap", False))
