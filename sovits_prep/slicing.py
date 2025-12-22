@@ -25,11 +25,11 @@ def _chunk_segment(start: float, end: float, min_dur: float, max_dur: float) -> 
     return chunks
 
 
-def _slice_audio(source_wav: Path, out_wav: Path, start: float, end: float) -> None:
+def _slice_audio(source_wav: Path, out_wav: Path, start: float, end: float, sample_rate: int) -> None:
     ensure_dir(out_wav.parent)
     duration = end - start
     stream = ffmpeg.input(str(source_wav), ss=start, t=duration)
-    stream = ffmpeg.output(stream, str(out_wav), ac=1, ar=16000, format="wav")
+    stream = ffmpeg.output(stream, str(out_wav), ac=1, ar=int(sample_rate), format="wav")
     ffmpeg.run(stream, overwrite_output=True, quiet=True)
 
 
@@ -84,6 +84,7 @@ def run_slicing(sources_df: pd.DataFrame, diar_df: pd.DataFrame, config: Pipelin
             "min_duration_sec": config.min_duration_sec,
             "max_duration_sec": config.max_duration_sec,
             "merge_gap_sec": config.merge_gap_sec,
+            "sample_rate": int(config.sample_rate),
         }
     )
 
@@ -153,7 +154,7 @@ def run_slicing(sources_df: pd.DataFrame, diar_df: pd.DataFrame, config: Pipelin
             wav_name = f"{row['speaker_id']}_{slice_counter:06d}.wav"
             wav_path = segments_dir / str(row["speaker_id"]) / wav_name
             try:
-                _slice_audio(source_audio, wav_path, start_sec, end_sec)
+                _slice_audio(source_audio, wav_path, start_sec, end_sec, sample_rate=config.sample_rate)
             except Exception as exc:  # noqa: BLE001
                 tqdm.write(
                     f"[slicing] ffmpeg failed for slice_id={slice_counter} src={source_audio.name}: {exc}"

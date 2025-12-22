@@ -51,6 +51,7 @@ def run_emotion_on_slices(slices_df: pd.DataFrame, config: PipelineConfig, devic
         {
             "emotion_model_name": EMOTION_MODEL_NAME,
             "device": device,
+            "sample_rate": int(config.sample_rate),
         }
     )
 

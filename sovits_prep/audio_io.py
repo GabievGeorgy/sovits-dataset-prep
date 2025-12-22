@@ -25,7 +25,7 @@ def find_input_files(input_dir: Path, exclude_root: Path | None = None) -> List[
     return sorted(paths)
 
 
-def _is_mono_16k_wav(path: Path) -> bool:
+def _is_mono_wav_with_sr(path: Path, sample_rate: int) -> bool:
     try:
         info = ffmpeg.probe(str(path))
         streams = info.get("streams", [])
@@ -35,20 +35,20 @@ def _is_mono_16k_wav(path: Path) -> bool:
         return (
             path.suffix.lower() == ".wav"
             and int(audio_stream.get("channels", 0)) == 1
-            and int(audio_stream.get("sample_rate", 0)) == 16000
+            and int(audio_stream.get("sample_rate", 0)) == int(sample_rate)
         )
     except ffmpeg.Error:
         return False
 
 
-def prepare_audio(input_path: Path, out_path: Path) -> Path:
+def prepare_audio(input_path: Path, out_path: Path, sample_rate: int) -> Path:
     ensure_dir(out_path.parent)
-    if _is_mono_16k_wav(input_path):
+    if _is_mono_wav_with_sr(input_path, sample_rate):
         shutil.copyfile(input_path, out_path)
         return out_path
 
     stream = ffmpeg.input(str(input_path))
-    stream = ffmpeg.output(stream, str(out_path), ac=1, ar=16000, format="wav")
+    stream = ffmpeg.output(stream, str(out_path), ac=1, ar=int(sample_rate), format="wav")
     ffmpeg.run(stream, overwrite_output=True, quiet=True)
     return out_path
 
@@ -65,7 +65,7 @@ def prepare_sources(config: PipelineConfig) -> pd.DataFrame:
     for idx, src_path in enumerate(tqdm(input_files, desc="Preparing audio", unit="file")):
         out_path = raw_dir / f"source_{idx:04d}.wav"
         try:
-            processed = prepare_audio(src_path, out_path)
+            processed = prepare_audio(src_path, out_path, sample_rate=config.sample_rate)
             duration = wav_duration_seconds(processed)
             records.append(
                 {

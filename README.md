@@ -12,7 +12,7 @@ A CLI pipeline for turning raw audio/video into GPT-SoVITS-ready datasets with d
 
 ## Install
 ```bash
-git clone <repo_url>
+git clone https://github.com/GabievGeorgy/sovits-dataset-prep
 cd sovits-dataset-prep
 bash scripts/install_linux.sh
 ```
@@ -40,6 +40,7 @@ Key options:
 - `--view-name`: name for the exported view under `views/`
 - `--hf-token`: Hugging Face token (or set `HF_TOKEN`)
 - `--device`: `auto` (prefer CUDA when available, falls back to CPU with a warning), `cuda` (requires GPU, errors if unavailable), or `cpu`
+- `--sample-rate`: output WAV sample rate in Hz
 
 - Filters: `--min-duration-sec`, `--max-duration-sec`, `--min-words`, `--min-quality-mos`, `--drop-multi-speaker`, `--allowed-speakers`
 - Diarization tuning: `--merge-gap-sec`, `--min-speakers`, `--max-speakers`, `--diar-min-speech-sec`, `--diar-min-pause-sec`
@@ -52,7 +53,7 @@ Notes:
 ## Outputs
 ```
 out_root/
-  raw_audio/            # normalized 16k mono wavs
+  raw_audio/            # normalized mono wavs
   segments/             # sliced wavs grouped by speaker
   metadata/
     sources.csv

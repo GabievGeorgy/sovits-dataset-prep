@@ -71,6 +71,7 @@ def run_diarization(
         {
             "diarization_model_name": DIARIZATION_MODEL_NAME,
             "device": device_tag,
+            "sample_rate": int(config.sample_rate),
             "iter_adapter": "v2",
             "min_speakers": config.min_speakers,
             "max_speakers": config.max_speakers,

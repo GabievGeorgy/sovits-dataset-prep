@@ -21,6 +21,7 @@ def _log_defaulted_params(ctx: click.Context) -> None:
     defaulted: dict[str, object] = {}
     for key in (
         "hf_token",
+        "sample_rate",
         "min_duration_sec",
         "max_duration_sec",
         "min_words",
@@ -49,6 +50,7 @@ def _log_defaulted_params(ctx: click.Context) -> None:
 @click.option("--out-root", type=click.Path(file_okay=False, path_type=Path), required=True)
 @click.option("--view-name", type=str, required=True)
 @click.option("--hf-token", type=str, default=None, help="HuggingFace token")
+@click.option("--sample-rate", type=int, default=16000, show_default=True, help="Output WAV sample rate (Hz)")
 @click.option("--min-duration-sec", type=float, default=3.0, show_default=True)
 @click.option("--max-duration-sec", type=float, default=15.0, show_default=True)
 @click.option("--min-words", type=int, default=2, show_default=True)
@@ -85,6 +87,7 @@ def main(
     out_root: Path,
     view_name: str,
     hf_token: Optional[str],
+    sample_rate: int,
     min_duration_sec: float,
     max_duration_sec: float,
     min_words: int,
@@ -109,6 +112,7 @@ def main(
         out_root=out_root,
         view_name=view_name,
         hf_token=hf_token,
+        sample_rate=int(sample_rate),
         min_duration_sec=min_duration_sec,
         max_duration_sec=max_duration_sec,
         min_words=min_words,

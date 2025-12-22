@@ -11,6 +11,7 @@ class PipelineConfig:
     hf_token: Optional[str]
 
     device: str = "auto"
+    sample_rate: int = 16000
 
     # Filtering
     min_duration_sec: float = 3.0

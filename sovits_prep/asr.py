@@ -41,6 +41,7 @@ def run_asr_on_slices(slices_df: pd.DataFrame, config: PipelineConfig, device: s
         {
             "asr_model_name": ASR_MODEL_NAME,
             "device": device,
+            "sample_rate": int(config.sample_rate),
         }
     )
 
